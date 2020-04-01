@@ -2,6 +2,7 @@ from pyspark import SparkContext, SparkConf
 import sys
 sys.path.insert(0, '.')
 from commons.Utils import Utils
+from datetime import datetime
 
 
 def get_data(line: str):
@@ -15,13 +16,14 @@ if __name__ == '__main__':
 
 
     prof_coders = line_data.filter(lambda line: line.split(',')[1] == "I am a developer by profession")
-    #words = line_data.flatMap(lambda line: line.split(","))
 
     data = prof_coders.map(get_data)
 
     wordCounts = data.countByValue()
 
-    data.saveAsTextFile("out/professional.text")
+    folder_name = str(datetime.today())
+
+    data.saveAsTextFile("out/" + folder_name + "/professional.text")
 
     for word, count in sorted(wordCounts.items(), key=lambda kv:(kv[1], kv[0]), reverse=True):
         print("{} : {}".format(word, count))
